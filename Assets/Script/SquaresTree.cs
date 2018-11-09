@@ -25,7 +25,7 @@ public class SquaresTree {
             }
         }
         if (squares.Count == 0) {
-            throw new Exception("No more available square");
+            throw new Exception("No more available square");        // Screen is full
         }
         squares = squares.OrderBy(i => i.side)
             .ThenBy(i => i.center.x)
@@ -48,7 +48,8 @@ public class SquareCell {
         this.side = side;
         this.center = center;
         float childrenSide = side/2;
-        if (childrenSide >= minSize) {
+        // Fill the square with children squares
+        if (childrenSide >= minSize) {                                                          
             for (int i = -1; i < 2; i +=2) {
                 for (int j = -1; j < 2; j +=2) {
                     Vector3 childCenter = center + new Vector3(i*0.5f*childrenSide, j*0.5f*childrenSide);

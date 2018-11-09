@@ -71,6 +71,8 @@ public class ViewsManager : MonoBehaviour
             Transition(currentView, main, false, false);
             currentView = main;
         }
+
+        // Go forward in decades
         if ((Input.GetAxis("CONTROLLER_RIGHT_STICK_HORIZONTAL") > 0.7 || Input.GetKey(KeyCode.RightArrow)) && !isTransitioning && (isMain || isDecade))
         {
             if (currentDecadeIdx == numDecades - 1)
@@ -84,6 +86,7 @@ public class ViewsManager : MonoBehaviour
             currentView = decades[currentDecadeIdx];
         }
 
+        // Go backward in decades
         if ((Input.GetAxis("CONTROLLER_RIGHT_STICK_HORIZONTAL") < -0.7 || Input.GetKey(KeyCode.LeftArrow)) && !isTransitioning && (!isMain && isDecade))
         {
             currentDecadeIdx--;
@@ -94,6 +97,7 @@ public class ViewsManager : MonoBehaviour
             isDecade = !isMain;
         }
 
+        // Change category
         if ((Input.GetAxis("CONTROLLER_RIGHT_STICK_VERTICAL") < -0.7 || Input.GetKey(KeyCode.DownArrow)) && !isTransitioning && (isMain || !isDecade))
         {
             if (currentCategoryIdx == numCategories - 1)

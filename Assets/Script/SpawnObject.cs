@@ -12,7 +12,7 @@ public class SpawnObject : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		for (int i = -50; i < 50; i++) {
-			Instantiate(customcube, new Vector3(i*0.5f, 0.05f, 0.0f), Quaternion.identity);
+			Instantiate(customcube, new Vector3(i*0.5f, 0.05f, 0.0f), Quaternion.identity); // Quaternion.identity - rotation nulle
 		}
 	}
 	

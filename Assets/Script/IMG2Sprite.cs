@@ -39,7 +39,7 @@ public class IMG2Sprite : MonoBehaviour {
 
 		// Load a PNG or JPG image from disk to a Texture2D, assign this texture to a new sprite and return its reference
 
-		Texture2D SpriteTexture = LoadTexture(FilePath);
+		Texture2D SpriteTexture = LoadTexture(FilePath); 
         if (SpriteTexture == null)
         {
             Debug.Log(FilePath);
@@ -52,6 +52,8 @@ public class IMG2Sprite : MonoBehaviour {
 		// Load a PNG or JPG file from disk to a Texture2D
 		// Returns null if load fails
 
+        // PB : LoadImage would be inefficient???
+        // Compressed all images to compressed format and use LoadRawTextureData? Or load progressively rather than all at once.
 		Texture2D Tex2D;
 		byte[] FileData;
 

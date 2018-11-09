@@ -34,7 +34,7 @@ public class SliceSpawner : MonoBehaviour
         }
     }
 
-    void SpawnCategories()
+    void SpawnCategories() // i to iterate over categories, then dimensions entered for the size of the screen in VR - Has to be changed for projection on a real screen
     {
         for (int i = -5; i < 5; i++)
         {

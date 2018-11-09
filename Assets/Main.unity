@@ -37987,6 +37987,15 @@ Prefab:
       propertyPath: field of view
       value: 60
       objectReference: {fileID: 0}
+    - target: {fileID: 20770519707920992, guid: d29bc40b7f3df26479d6a0aac211c355,
+        type: 2}
+      propertyPath: m_TargetDisplay
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1372541880982678, guid: d29bc40b7f3df26479d6a0aac211c355, type: 2}
+      propertyPath: m_TagString
+      value: MainCamera
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d29bc40b7f3df26479d6a0aac211c355, type: 2}
   m_IsPrefabAsset: 0
@@ -74099,7 +74108,7 @@ GameObject:
   - component: {fileID: 2086829302}
   m_Layer: 0
   m_Name: Main Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
