@@ -88,6 +88,7 @@ public class SliceController : MonoBehaviour
         RectTransform canvasRect = GetComponent<RectTransform>();
         createBorders(canvasRect);
 
+        //DIR TO LOAD PICTURES
         string basedir = "photos_low/" + decade;
         if (category != null)
         {

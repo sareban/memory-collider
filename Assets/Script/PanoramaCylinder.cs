@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// USEFUL ???
 public class PanoramaCylinder : MonoBehaviour {
 	public Shader cylinderShader;
 	public float shiftU = 0.0f;
