@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
+using UnityEngine.Video;
 
 public class SliceController : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class SliceController : MonoBehaviour
         {
             for (int sel = 0; sel < 2; sel++)
             {
-                float factor = (dir + 1) / 2f * sel * (1-widthRatio);
+                float factor = (dir + 1) / 2f * sel * (1 - widthRatio);
                 GameObject border = new GameObject();
                 border.name = "border";
                 border.transform.SetParent(borders.transform);
@@ -40,10 +41,10 @@ public class SliceController : MonoBehaviour
         GameObject images = new GameObject();
         images.name = "Images";
         images.transform.SetParent(canvasRect.transform);
-        float available_size = (1-(filenames.Length+1)*0.01f)*Mathf.Min(canvasRect.rect.width, canvasRect.rect.height);
-        float min_width = canvasRect.rect.width/8f * Mathf.Max(15f/(filenames.Length+1f), 1f);
-        float max_width = canvasRect.rect.width/7.5f * Mathf.Max(15f / (filenames.Length + 1f), 1f);
-        SquaresTree sqt = new SquaresTree(canvasRect.rect.width*widthRatio, canvasRect.rect.height, max_width, min_width, canvasRect.position-new Vector3(canvasRect.rect.width * (1-widthRatio) * 0.5f, 0,0));
+        float available_size = (1 - (filenames.Length + 1) * 0.01f) * Mathf.Min(canvasRect.rect.width, canvasRect.rect.height);
+        float min_width = canvasRect.rect.width / 8f * Mathf.Max(15f / (filenames.Length + 1f), 1f);
+        float max_width = canvasRect.rect.width / 7.5f * Mathf.Max(15f / (filenames.Length + 1f), 1f);
+        SquaresTree sqt = new SquaresTree(canvasRect.rect.width * widthRatio, canvasRect.rect.height, max_width, min_width, canvasRect.position - new Vector3(canvasRect.rect.width * (1 - widthRatio) * 0.5f, 0, 0));
         for (int i = 0; i < filenames.Length; i++)
         {
             SquareCell sqc = sqt.getSquare();
@@ -53,7 +54,7 @@ public class SliceController : MonoBehaviour
             img.transform.SetParent(images.transform);
             (img.GetComponent<ImageController>()).SetUpImage(filenames[i]);
             (img.GetComponent<ImageController>()).SetSize(size, size);
-			(img.GetComponent<ImageController>()).SetPos(sqc.center);
+            (img.GetComponent<ImageController>()).SetPos(sqc.center);
         }
     }
 
@@ -78,10 +79,37 @@ public class SliceController : MonoBehaviour
             (img.GetComponent<ImageController>()).SetPos(sqc.center);
         }
     }
+
+    // NEED TO HAVE VIDEOPLAYER ON SQUARES
+    void spawnFilms(RectTransform canvasRect, VideoClip[] clips)
+    {
+        GameObject films = new GameObject();
+        films.name = "Films";
+        films.transform.SetParent(canvasRect.transform);
+        float available_size = (1 - (clips.Length + 1) * 0.01f) * Mathf.Min(canvasRect.rect.width, canvasRect.rect.height);
+        float min_width = canvasRect.rect.width / 8f * Mathf.Max(15f / (clips.Length + 1f), 1f);
+        float max_width = canvasRect.rect.width / 7.5f * Mathf.Max(15f / (clips.Length + 1f), 1f);
+        SquaresTree sqt = new SquaresTree(canvasRect.rect.width * widthRatio, canvasRect.rect.height, max_width, min_width, canvasRect.position - new Vector3(canvasRect.rect.width * (1 - widthRatio) * 0.5f, 0, 0));
+        for (int i = 0; i < clips.Length; i++)
+        {
+            SquareCell sqc = sqt.getSquare();
+            float size = sqc.side;
+            GameObject clip = Instantiate(image, sqc.center, Quaternion.identity);
+            clip.name = string.Format("film{0}", i);
+            clip.transform.SetParent(films.transform);
+            //(clip.GetComponent<ImageController>()).SetUpImage(clips[i]);
+            (clip.GetComponent<ImageController>()).SetSize(size, size);
+            (clip.GetComponent<ImageController>()).SetPos(sqc.center);
+        }
+    }
+
+
+
+
     // Use this for initialization
     void Start()
     {
-        if(decade == null)
+        if (decade == null)
         {
             throw new System.Exception("Need a decade");
         }
@@ -94,9 +122,8 @@ public class SliceController : MonoBehaviour
         {
             basedir += "/" + category;
         }
-
+        //IMAGES
         List<Texture2D> textures = new List<Texture2D>(Resources.LoadAll<Texture2D>(basedir));
-
         List<Texture2D> textures_init = new List<Texture2D>(textures);
 
         int numImages = Mathf.Min(maxImages, textures.Count);
@@ -112,9 +139,31 @@ public class SliceController : MonoBehaviour
             images[i] = textures[choice];
             textures.RemoveAt(choice);
         }
-        spawnImages(canvasRect, images);
+        //spawnImages(canvasRect, images);
+
+        //FILMS
+        List<VideoClip> clips = new List<VideoClip>(Resources.LoadAll<VideoClip>(basedir));
+        List<VideoClip> clips_init = new List<VideoClip>(clips);
+
+        int numFilms = Mathf.Min(maxImages, clips.Count);
+        VideoClip[] films = new VideoClip[numFilms];
+        for (int i = 0; i < films.Length; i++)
+        {
+            if (clips.Count == 0)
+            {
+                clips = new List<VideoClip>(clips_init);
+            }
+            int choice = Random.Range(0, textures.Count);
+            //images[i] = imagesPath + files[i % files.Length];
+            films[i] = clips[choice];
+            clips.RemoveAt(choice);
+        }
+        spawnFilms(canvasRect, films);
+
+
+
         //Debug.Log(files);
-		//new SquaresAssigner(100, 100, 50, 10, new Vector3(0, 0, canvasRect.position.z));
+        //new SquaresAssigner(100, 100, 50, 10, new Vector3(0, 0, canvasRect.position.z));
         //SquaresTree sq = new SquaresTree(8, 8, 4, 1);
     }
 

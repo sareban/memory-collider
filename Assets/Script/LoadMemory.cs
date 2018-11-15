@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using System.IO;
 
 // Problem : need to add resources at runtime to allow for new pictures / sound clips / films to be added after compilation.
 public class LoadMemory : MonoBehaviour
@@ -9,7 +10,7 @@ public class LoadMemory : MonoBehaviour
 
     public string category = null;
     public string decade = null;
-    string[] files;
+    public static string[] files;
 
     public static List<Texture2D> LoadPictures(string path, string category, string decade)
     {
@@ -19,9 +20,9 @@ public class LoadMemory : MonoBehaviour
             basepath += "/" + category;
         }
         
-        files = System.IO:Directory.GetFiles(p)
+     //   files = System.IO.Directory.GetFiles(p);
         List<Texture2D> loadedPictures = new List<Texture2D>();
         //Networking.UnityWebRequest GetTexture(string uri);
-        return loadedPictures
+        return loadedPictures;
     }
 }
