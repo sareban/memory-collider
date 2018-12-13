@@ -11700,10 +11700,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 167cae44acfad26449928825d0abf0c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cylinderShader: {fileID: 4800000, guid: 83bd4eb4058c16f4cb466c9d5f703a36, type: 3}
   shiftU: 0
-  scaleCylinderV: 0.4
-  tex: {fileID: 8400000, guid: f16846ff699a2e64e8a990450c9fa28f, type: 2}
+  scaleCylinderV: 0.1
+  tex: {fileID: 0}
 --- !u!4 &356019423
 Transform:
   m_ObjectHideFlags: 0
@@ -70511,7 +70510,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a1d7f1c8db2fb342b0496470d550751, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Slice: {fileID: 1947425273628278, guid: dec1e15424d5d194d96b439c1f267690, type: 2}
+  Slice: {fileID: 0}
   isMain: 1
 --- !u!114 &1993205264
 MonoBehaviour:
@@ -70535,10 +70534,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 167cae44acfad26449928825d0abf0c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cylinderShader: {fileID: 4800000, guid: 83bd4eb4058c16f4cb466c9d5f703a36, type: 3}
   shiftU: 0
-  scaleCylinderV: 0.4
-  tex: {fileID: 8400000, guid: f16846ff699a2e64e8a990450c9fa28f, type: 2}
+  scaleCylinderV: 0.1
+  tex: {fileID: 0}
 --- !u!114 &1993205266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -70554,7 +70552,7 @@ MonoBehaviour:
   decadesContainer: {fileID: 2061344646}
   categoriesContainer: {fileID: 1291707803}
   cylinder: {fileID: 356019420}
-  isMain: 1
+  isMain: 0
   isTransitioning: 0
   preload: 1
   decades: []

@@ -4,7 +4,7 @@ using System.IO;
 
 public class IMG2Sprite : MonoBehaviour {
 
-	// This script loads a PNG or JPEG image from disk and returns it as a Sprite
+    // This script loads a PNG or JPEG from disk and returns it as a Sprite
 	// Drop it on any GameObject/Camera in your scene (singleton implementation)
 	//
 	// Usage from any other script:

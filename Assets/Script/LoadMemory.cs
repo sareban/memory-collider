@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using System.IO;
 
-// Problem : need to add resources at runtime to allow for new pictures / sound clips / films to be added after compilation.
+// Problem : need to add resources at runtime to allow for new pictures / sound clips / to be added after compilation.
 public class LoadMemory : MonoBehaviour
 {
 

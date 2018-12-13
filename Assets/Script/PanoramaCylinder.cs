@@ -5,7 +5,6 @@ using UnityEngine;
 
 // USEFUL ???
 public class PanoramaCylinder : MonoBehaviour {
-	public Shader cylinderShader;
 	public float shiftU = 0.0f;
 	public float scaleCylinderV = 0.1f;
 	private MeshRenderer meshRenderer = null;
@@ -14,12 +13,7 @@ public class PanoramaCylinder : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		CylinderGenerator.Create(gameObject, true, 64);
-		meshRenderer = gameObject.AddComponent<MeshRenderer>();
-		meshRenderer.material.shader = cylinderShader;
-		meshRenderer.material.EnableKeyword("FROM_SPHERICAL");
-		meshRenderer.material.SetFloat("_Fade", 1f);
-		meshRenderer.material.SetFloat("_ShiftU", shiftU);
-		meshRenderer.material.SetFloat("_ScaleV", scaleCylinderV);
+
 	}
 	
 	// Update is called once per frame
@@ -37,3 +31,10 @@ public class PanoramaCylinder : MonoBehaviour {
 //		return tex;
 	//}
 }
+
+//      meshRenderer = gameObject.AddComponent<MeshRenderer>();
+//		meshRenderer.material.shader = cylinderShader;
+//		meshRenderer.material.EnableKeyword("FROM_SPHERICAL");
+//		meshRenderer.material.SetFloat("_Fade", 1f);
+//		meshRenderer.material.SetFloat("_ShiftU", shiftU);
+//		meshRenderer.material.SetFloat("_ScaleV", scaleCylinderV);

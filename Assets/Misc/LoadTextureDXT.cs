@@ -16,7 +16,7 @@ public class LoadTextureDXT : Object {
         if (!File.Exists(path))
         {
             if (verbose)
-                Debug.Log("Compressed image not found: " + path);
+                Debug.Log("Compressed not found: " + path);
             return null;
         }
         Texture2D tex = new Texture2D(width, height, format, false);
@@ -27,7 +27,7 @@ public class LoadTextureDXT : Object {
 #endif
         tex.Apply();
         if (verbose)
-            Debug.Log("Compressed image loaded: " + path + " size: " + width + "x" + height);
+            Debug.Log("Compressed loaded: " + path + " size: " + width + "x" + height);
         return tex;
     }
     public static Texture2D Load(string path, bool verbose = false)

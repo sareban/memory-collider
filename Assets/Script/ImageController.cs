@@ -10,6 +10,7 @@ public class ImageController : MonoBehaviour
     private BoxCollider2D bc;
     private Vector3 defaultRot;
     public float maxSpeed = 50f;
+    Image img;
 
     // Use this for initialization
     void Start()
@@ -29,7 +30,7 @@ public class ImageController : MonoBehaviour
 
     public void SetUpImage(string imgPath)
     {
-        Image img = GetComponent<Image>();
+        img = GetComponent<Image>();
         img.enabled = true;
 
         img.sprite = SpritesCache.instance.LoadSprite(imgPath);
@@ -49,7 +50,8 @@ public class ImageController : MonoBehaviour
 
     public void SetUpImage(Texture2D texture)
     {
-        Image img = GetComponent<Image>();
+
+        img = GetComponent<Image>();
         img.enabled = true;
 
         img.sprite = SpritesCache.instance.LoadSprite(texture);

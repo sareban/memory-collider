@@ -12,6 +12,7 @@ public class SliceController : MonoBehaviour
     public string decade = null;
     public int maxImages = 30;
     public float widthRatio = 0.75f;
+    
 
     void createBorders(RectTransform canvasRect)
     {
@@ -90,16 +91,22 @@ public class SliceController : MonoBehaviour
         float min_width = canvasRect.rect.width / 8f * Mathf.Max(15f / (clips.Length + 1f), 1f);
         float max_width = canvasRect.rect.width / 7.5f * Mathf.Max(15f / (clips.Length + 1f), 1f);
         SquaresTree sqt = new SquaresTree(canvasRect.rect.width * widthRatio, canvasRect.rect.height, max_width, min_width, canvasRect.position - new Vector3(canvasRect.rect.width * (1 - widthRatio) * 0.5f, 0, 0));
+
         for (int i = 0; i < clips.Length; i++)
         {
             SquareCell sqc = sqt.getSquare();
             float size = sqc.side;
-            GameObject clip = Instantiate(image, sqc.center, Quaternion.identity);
-            clip.name = string.Format("film{0}", i);
-            clip.transform.SetParent(films.transform);
-            //(clip.GetComponent<ImageController>()).SetUpImage(clips[i]);
-            (clip.GetComponent<ImageController>()).SetSize(size, size);
-            (clip.GetComponent<ImageController>()).SetPos(sqc.center);
+            GameObject vid = Instantiate(image, sqc.center, Quaternion.identity);
+            vid.name = string.Format("film{0}", i);
+            vid.transform.SetParent(films.transform);
+            (vid.GetComponent<ImageController>()).SetUpImage("vidscreen.jpg");
+            (vid.GetComponent<ImageController>()).SetSize(size, size);
+            (vid.GetComponent<ImageController>()).SetPos(sqc.center);
+            //Debug.Log("Hello", vid);
+            //var videoPlayer = vid.AddComponent<UnityEngine.Video.VideoPlayer>();
+            //videoPlayer.targetCamera = Camera.main;
+            //videoPlayer.clip = clips[i];
+            //videoPlayer.Play();
         }
     }
 
@@ -123,12 +130,13 @@ public class SliceController : MonoBehaviour
             basedir += "/" + category;
         }
         //IMAGES
-        List<Texture2D> textures = new List<Texture2D>(Resources.LoadAll<Texture2D>(basedir));
-        List<Texture2D> textures_init = new List<Texture2D>(textures);
+        //List<Texture2D> textures = new List<Texture2D>(Resources.LoadAll<Texture2D>(basedir));
+        List<Texture2D> textures = new List<Texture2D>();
+        List <Texture2D> textures_init = new List<Texture2D>(textures);
 
         int numImages = Mathf.Min(maxImages, textures.Count);
         Texture2D[] images = new Texture2D[numImages];
-		for (int i = 0; i < images.Length; i++)
+        for (int i = 0; i < images.Length; i++)
         {
             if (textures.Count == 0)
             {
@@ -139,25 +147,40 @@ public class SliceController : MonoBehaviour
             images[i] = textures[choice];
             textures.RemoveAt(choice);
         }
-        //spawnImages(canvasRect, images);
+        // spawnImages(canvasRect, images);
 
         //FILMS
-        List<VideoClip> clips = new List<VideoClip>(Resources.LoadAll<VideoClip>(basedir));
+        //List<VideoClip> clips = new List<VideoClip>(Resources.LoadAll<VideoClip>(basedir));
+        List<VideoClip> clips = new List<VideoClip>();
+        clips.Add(Resources.Load<VideoClip>("TEST-VIDEO2"));
         List<VideoClip> clips_init = new List<VideoClip>(clips);
+
 
         int numFilms = Mathf.Min(maxImages, clips.Count);
         VideoClip[] films = new VideoClip[numFilms];
+
         for (int i = 0; i < films.Length; i++)
         {
             if (clips.Count == 0)
             {
                 clips = new List<VideoClip>(clips_init);
             }
-            int choice = Random.Range(0, textures.Count);
-            //images[i] = imagesPath + files[i % files.Length];
-            films[i] = clips[choice];
-            clips.RemoveAt(choice);
+            //int choice = Random.Range(0, textures.Count);
+            //films[i] = clips[choice];
+            films[i] = clips[i];
+            //clips.RemoveAt(choice);
         }
+        Debug.Log("hello");
+        Debug.Log(films[0]);
+        //VideoClip[] films = new VideoClip[] { Resources.Load<VideoClip>("TEST-VIDEO2")};
+        //GameObject camera = GameObject.Find("Main Camera");
+        // //var videoPlayer = camera.AddComponent<UnityEngine.Video.VideoPlayer>();
+        // videoPlayer.clip = films[0];
+        // Debug.Log(films);
+        // videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.CameraNearPlane;
+        //  videoPlayer.targetCameraAlpha = 0.5F;
+        //videoPlayer.Play();
+
         spawnFilms(canvasRect, films);
 
 
@@ -167,49 +190,50 @@ public class SliceController : MonoBehaviour
         //SquaresTree sq = new SquaresTree(8, 8, 4, 1);
     }
 
-        // Use this for initialization
-  //  void Start()
-  //  {
-  //      if(decade == null)
-  //      {
-  //          throw new System.Exception("Need a decade");
-  //      }
-  //      RectTransform canvasRect = GetComponent<RectTransform>();
-  //      createBorders(canvasRect);
 
-  //      List<string> files = new List<string>();
-  //      //        string basedir = "D:/CERN/Selection/cern/photos_low/" + decade + "/";
-  //      //Texture2D[] textures = Resources.LoadAll<Texture2D>("photos_low/50s/media");
-  //      Debug.Log("Length is of " + textures.Length);
-  //      string basedir = Application.dataPath + "/Ressources/Images/photos_low/" + decade + "/";
-  //      if (category != null)
-  //      {
-  //          basedir += category + "/";
-  //      }
-  //      files.AddRange(Directory.GetFiles(basedir, "*.jpg", SearchOption.AllDirectories));
+    // Use this for initialization
+    //  void Start()
+    //  {
+    //      if(decade == null)
+    //      {
+    //          throw new System.Exception("Need a decade");
+    //      }
+    //      RectTransform canvasRect = GetComponent<RectTransform>();
+    //      createBorders(canvasRect);
 
-  //      List<string> files_init = new List<string>(files);
-  //      string imagesPath = Application.dataPath + "/Images/";
+    //      List<string> files = new List<string>();
+    //      //        string basedir = "D:/CERN/Selection/cern/photos_low/" + decade + "/";
+    //      //Texture2D[] textures = Resources.LoadAll<Texture2D>("photos_low/50s/media");
+    //      Debug.Log("Length is of " + textures.Length);
+    //      string basedir = Application.dataPath + "/Ressources/Images/photos_low/" + decade + "/";
+    //      if (category != null)
+    //      {
+    //          basedir += category + "/";
+    //      }
+    //      files.AddRange(Directory.GetFiles(basedir, "*.jpg", SearchOption.AllDirectories));
 
-  //      int numImages = Mathf.Min(maxImages, files.Count);
-  //      //Debug.Log(numImages +" num files"+ files.Count);
-  //      string[] images = new string[numImages];
-		//for (int i = 0; i < images.Length; i++)
-  //      {
-  //          if (files.Count == 0)
-  //          {
-  //              files = new List<string>(files_init);
-  //          }
-  //          int choice = Random.Range(0, files.Count);
-  //          //images[i] = imagesPath + files[i % files.Length];
-  //          images[i] = files[choice];
-  //          files.RemoveAt(choice);
-  //      }
-  //      spawnImages(canvasRect, images);
-  //      //Debug.Log(files);
-		////new SquaresAssigner(100, 100, 50, 10, new Vector3(0, 0, canvasRect.position.z));
-  //      //SquaresTree sq = new SquaresTree(8, 8, 4, 1);
-  //  }
+    //      List<string> files_init = new List<string>(files);
+    //      string imagesPath = Application.dataPath + "/Images/";
+
+    //      int numImages = Mathf.Min(maxImages, files.Count);
+    //      //Debug.Log(numImages +" num files"+ files.Count);
+    //      string[] images = new string[numImages];
+    //for (int i = 0; i < images.Length; i++)
+    //      {
+    //          if (files.Count == 0)
+    //          {
+    //              files = new List<string>(files_init);
+    //          }
+    //          int choice = Random.Range(0, files.Count);
+    //          //images[i] = imagesPath + files[i % files.Length];
+    //          images[i] = files[choice];
+    //          files.RemoveAt(choice);
+    //      }
+    //      spawnImages(canvasRect, images);
+    //      //Debug.Log(files);
+    ////new SquaresAssigner(100, 100, 50, 10, new Vector3(0, 0, canvasRect.position.z));
+    //      //SquaresTree sq = new SquaresTree(8, 8, 4, 1);
+    //  }
     // Update is called once per frame
     void Update()
     {
