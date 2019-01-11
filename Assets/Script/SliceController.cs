@@ -7,12 +7,14 @@ using UnityEngine.Video;
 public class SliceController : MonoBehaviour
 {
     private RectTransform canvasRect;
+   // public RawImage rawImage;
     public GameObject image;
     public string category = null;
     public string decade = null;
     public int maxImages = 30;
+    public int maxFilms = 5;
     public float widthRatio = 0.75f;
-    
+    string photos_dir = "test/"; //photos_low : low resolution pictures directory
 
     void createBorders(RectTransform canvasRect)
     {
@@ -81,7 +83,6 @@ public class SliceController : MonoBehaviour
         }
     }
 
-    // NEED TO HAVE VIDEOPLAYER ON SQUARES
     void spawnFilms(RectTransform canvasRect, VideoClip[] clips)
     {
         GameObject films = new GameObject();
@@ -97,16 +98,38 @@ public class SliceController : MonoBehaviour
             SquareCell sqc = sqt.getSquare();
             float size = sqc.side;
             GameObject vid = Instantiate(image, sqc.center, Quaternion.identity);
+
             vid.name = string.Format("film{0}", i);
             vid.transform.SetParent(films.transform);
-            (vid.GetComponent<ImageController>()).SetUpImage("vidscreen.jpg");
+
+            var videoPlayer = vid.AddComponent<UnityEngine.Video.VideoPlayer>();
+            //videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.APIOnly;
+
+            videoPlayer.clip = clips[i];
+            //Debug.Log(videoPlayer.clip);
+            //Debug.Log(vid.GetComponent<ImageController>().GetImgRenderer().GetComponent<Renderer>());
+            //(vid.GetComponent<ImageController>()).SetUpVidScreen((Texture2D)Resources.Load("vidscreen"));
+            Debug.Log(videoPlayer.texture);
+            Debug.Log("aa");
+            (vid.GetComponent<ImageController>()).SetUpVidScreen((Texture2D)videoPlayer.texture);
             (vid.GetComponent<ImageController>()).SetSize(size, size);
             (vid.GetComponent<ImageController>()).SetPos(sqc.center);
-            //Debug.Log("Hello", vid);
-            //var videoPlayer = vid.AddComponent<UnityEngine.Video.VideoPlayer>();
-            //videoPlayer.targetCamera = Camera.main;
-            //videoPlayer.clip = clips[i];
-            //videoPlayer.Play();
+            //VideoController vidi = (vid.GetComponent<VideoController>());
+           
+            // Debug.Log(vid.GetComponent<ImageController>().GetImgRenderer());
+
+
+
+            //  videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.MaterialOverride;
+            // videoPlayer.targetMaterialRenderer = (vid.GetComponent<ImageController>()).GetImgRenderer();
+            //  videoPlayer.targetMaterialProperty = "_MainTex";
+
+
+
+            //  rawImage.texture = videoPlayer.texture;
+            // videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.RenderTexture;
+
+            videoPlayer.Play();
         }
     }
 
@@ -123,18 +146,26 @@ public class SliceController : MonoBehaviour
         RectTransform canvasRect = GetComponent<RectTransform>();
         createBorders(canvasRect);
 
-        //DIR TO LOAD PICTURES
-        string basedir = "photos_low/" + decade;
+        //DIR TO LOAD PICTURES FROM
+        string basedir = photos_dir + decade;  
         if (category != null)
         {
             basedir += "/" + category;
         }
-        //IMAGES
+
+        //------- PICTURES --------------
+        // Load Textures from the defined base directory. PROBLEM :  Resources.LoadAll VERY RESOURCES CONSUMING, needs another delayed approach 
         //List<Texture2D> textures = new List<Texture2D>(Resources.LoadAll<Texture2D>(basedir));
-        List<Texture2D> textures = new List<Texture2D>();
+        //Build lists from the loaded resoruces
+        List<Texture2D> textures = new List<Texture2D>(); //DELETE AFTER TESTS
         List <Texture2D> textures_init = new List<Texture2D>(textures);
 
+
+
+        //----Create a new list to select a subset of pictures from the available assets 
+        //Number of images to display = minimum between pictures available and set parameter
         int numImages = Mathf.Min(maxImages, textures.Count);
+
         Texture2D[] images = new Texture2D[numImages];
         for (int i = 0; i < images.Length; i++)
         {
@@ -142,21 +173,24 @@ public class SliceController : MonoBehaviour
             {
                 textures = new List<Texture2D>(textures_init);
             }
+            //Algorithm to randomize the choice : simple random int
             int choice = Random.Range(0, textures.Count);
-            //images[i] = imagesPath + files[i % files.Length];
             images[i] = textures[choice];
             textures.RemoveAt(choice);
         }
-        // spawnImages(canvasRect, images);
 
-        //FILMS
-        //List<VideoClip> clips = new List<VideoClip>(Resources.LoadAll<VideoClip>(basedir));
-        List<VideoClip> clips = new List<VideoClip>();
-        clips.Add(Resources.Load<VideoClip>("TEST-VIDEO2"));
+        //Call the method to display pictures on the screens
+        //spawnImages(canvasRect, images);
+
+        //------- FILMS --------------
+        // Load VideoClips from the defined base directory. PROBLEM :  Resources.LoadAll VERY RESOURCES CONSUMING, needs another delayed approach 
+        List<VideoClip> clips = new List<VideoClip>(Resources.LoadAll<VideoClip>(basedir));
+        //List<VideoClip> clips = new List<VideoClip>();
         List<VideoClip> clips_init = new List<VideoClip>(clips);
 
-
-        int numFilms = Mathf.Min(maxImages, clips.Count);
+        //----Create a new list to select a subset of films from the available assets 
+        //Number of films to display = minimum between films available and set parameter
+        int numFilms = Mathf.Min(maxFilms, clips.Count);
         VideoClip[] films = new VideoClip[numFilms];
 
         for (int i = 0; i < films.Length; i++)
@@ -165,23 +199,33 @@ public class SliceController : MonoBehaviour
             {
                 clips = new List<VideoClip>(clips_init);
             }
+            //Algorithm to randomize the choice : simple random int
             //int choice = Random.Range(0, textures.Count);
             //films[i] = clips[choice];
             films[i] = clips[i];
             //clips.RemoveAt(choice);
         }
-        Debug.Log("hello");
-        Debug.Log(films[0]);
+
+        if (films.Length != 0)
+        {
+            Debug.Log(films[1]);
+        }
+
+
+        //Call the method to display pictures on the screens
+        spawnFilms(canvasRect, films);
+
+        //---------TEST : THIS WILL DISPLAY A VIDEO ON THE MAIN CAMERA-----------
         //VideoClip[] films = new VideoClip[] { Resources.Load<VideoClip>("TEST-VIDEO2")};
         //GameObject camera = GameObject.Find("Main Camera");
-        // //var videoPlayer = camera.AddComponent<UnityEngine.Video.VideoPlayer>();
-        // videoPlayer.clip = films[0];
-        // Debug.Log(films);
-        // videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.CameraNearPlane;
-        //  videoPlayer.targetCameraAlpha = 0.5F;
+        //var videoPlayer = camera.AddComponent<UnityEngine.Video.VideoPlayer>();
+        //videoPlayer.clip = films[0];
+        //Debug.Log(films);
+        //videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.CameraNearPlane;
+        //videoPlayer.targetCameraAlpha = 0.5F;
         //videoPlayer.Play();
 
-        spawnFilms(canvasRect, films);
+
 
 
 
@@ -191,54 +235,14 @@ public class SliceController : MonoBehaviour
     }
 
 
-    // Use this for initialization
-    //  void Start()
-    //  {
-    //      if(decade == null)
-    //      {
-    //          throw new System.Exception("Need a decade");
-    //      }
-    //      RectTransform canvasRect = GetComponent<RectTransform>();
-    //      createBorders(canvasRect);
 
-    //      List<string> files = new List<string>();
-    //      //        string basedir = "D:/CERN/Selection/cern/photos_low/" + decade + "/";
-    //      //Texture2D[] textures = Resources.LoadAll<Texture2D>("photos_low/50s/media");
-    //      Debug.Log("Length is of " + textures.Length);
-    //      string basedir = Application.dataPath + "/Ressources/Images/photos_low/" + decade + "/";
-    //      if (category != null)
-    //      {
-    //          basedir += category + "/";
-    //      }
-    //      files.AddRange(Directory.GetFiles(basedir, "*.jpg", SearchOption.AllDirectories));
-
-    //      List<string> files_init = new List<string>(files);
-    //      string imagesPath = Application.dataPath + "/Images/";
-
-    //      int numImages = Mathf.Min(maxImages, files.Count);
-    //      //Debug.Log(numImages +" num files"+ files.Count);
-    //      string[] images = new string[numImages];
-    //for (int i = 0; i < images.Length; i++)
-    //      {
-    //          if (files.Count == 0)
-    //          {
-    //              files = new List<string>(files_init);
-    //          }
-    //          int choice = Random.Range(0, files.Count);
-    //          //images[i] = imagesPath + files[i % files.Length];
-    //          images[i] = files[choice];
-    //          files.RemoveAt(choice);
-    //      }
-    //      spawnImages(canvasRect, images);
-    //      //Debug.Log(files);
-    ////new SquaresAssigner(100, 100, 50, 10, new Vector3(0, 0, canvasRect.position.z));
-    //      //SquaresTree sq = new SquaresTree(8, 8, 4, 1);
-    //  }
     // Update is called once per frame
     void Update()
     {
     }
 
+
+    // USEFUL?? Not sure
     public void SetColor(Color color)
     {
         Image[] imgs = GetComponentsInChildren<Image>();

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 
@@ -29,8 +30,11 @@ public class SpritesCache : MonoBehaviour {
         Sprite sprite = null;
         if (!spriteCache.TryGetValue(path, out sprite))
         {
-            sprite = IMG2Sprite.instance.LoadNewSprite(path);       // change sprite since passed by reference with the out keyword
-            spriteCache.Add(path, sprite);                          
+            {
+                sprite = IMG2Sprite.instance.LoadNewSprite(path);       // change sprite since passed by reference with the out keyword
+                spriteCache.Add(path, sprite);
+            }
+                      
         }
 
         return sprite;

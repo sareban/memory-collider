@@ -42,10 +42,14 @@ public class IMG2Sprite : MonoBehaviour {
 		Texture2D SpriteTexture = LoadTexture(FilePath); 
         if (SpriteTexture == null)
         {
+            Debug.Log("Empty");
             Debug.Log(FilePath);
         }
-        return Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height),new Vector2(0,0), PixelsPerUnit);
-	}
+
+
+            return Sprite.Create(SpriteTexture, new Rect(0, 0, SpriteTexture.width, SpriteTexture.height), new Vector2(0, 0), PixelsPerUnit);
+
+    }
 
 	public Texture2D LoadTexture(string FilePath) {
 

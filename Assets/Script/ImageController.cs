@@ -11,6 +11,7 @@ public class ImageController : MonoBehaviour
     private Vector3 defaultRot;
     public float maxSpeed = 50f;
     Image img;
+ 
 
     // Use this for initialization
     void Start()
@@ -55,6 +56,32 @@ public class ImageController : MonoBehaviour
         img.enabled = true;
 
         img.sprite = SpritesCache.instance.LoadSprite(texture);
+        Vector3 scale;
+        if (img.sprite.texture.width > img.sprite.texture.height)
+        {
+            scale = new Vector3(1f, (float)img.sprite.texture.height / (float)img.sprite.texture.width, 1f);
+        }
+        else
+        {
+            scale = new Vector3((float)img.sprite.texture.width / (float)img.sprite.texture.height, 1f, 1f);
+        }
+        img.transform.localScale = scale;
+        bc = GetComponent<BoxCollider2D>();
+        bc.transform.localScale = scale;
+    }
+    public SpriteRenderer GetImgRenderer()
+    {
+        return GetComponent<Image>().GetComponent<SpriteRenderer>();
+    }
+
+
+    public void SetUpVidScreen(Texture2D texture)
+    {
+        img = GetComponent<Image>();
+        Debug.Log(img);
+
+        img.sprite = IMG2Sprite.instance.LoadNewSprite(texture);
+
         Vector3 scale;
         if (img.sprite.texture.width > img.sprite.texture.height)
         {
