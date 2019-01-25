@@ -33689,6 +33689,28 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &994326658 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1947425273628278, guid: dec1e15424d5d194d96b439c1f267690,
+    type: 2}
+  m_PrefabInternal: {fileID: 2002248401}
+--- !u!114 &994326659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 994326658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d173047e1a460346bad37ff364389ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  image: {fileID: 1013748184600632, guid: 5f564c849ef7b1649abcabcb318e11dc, type: 2}
+  category: 
+  decade: 00s
+  maxImages: 30
+  maxFilms: 5
+  widthRatio: 0.75
 --- !u!1001 &997753883
 Prefab:
   m_ObjectHideFlags: 0
@@ -68637,6 +68659,11 @@ Prefab:
         type: 2}
       propertyPath: maxImages
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114157288930450870, guid: dec1e15424d5d194d96b439c1f267690,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114280524247743446, guid: dec1e15424d5d194d96b439c1f267690, type: 2}

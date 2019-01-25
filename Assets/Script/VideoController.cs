@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.Video;
+using UnityEditor;
 
 public class VideoController : MonoBehaviour
 {
@@ -10,6 +12,7 @@ public class VideoController : MonoBehaviour
     private BoxCollider2D bc;
     private Vector3 defaultRot;
     public float maxSpeed = 50f;
+    int destroyTime = 5;
     RawImage screen;
 
 
@@ -27,12 +30,22 @@ public class VideoController : MonoBehaviour
         RectTransform r = GetComponent<RectTransform>();
         r.sizeDelta -= new Vector2(20, 20);
         numInstances += 1;
+       
+
+
     }
 
-    public void SetUpFilm(string imgPath)
+    // Display the film on screen
+    public IEnumerator SetUpFilm()
     {
+        //Prepare screen
         screen = GetComponent<RawImage>();
+        var tex = new RenderTexture(256, 256, 24);
+        tex.Create();
+        screen.texture = tex;
         screen.enabled = true;
+
+        //Adjust screen
 
         Vector3 scale;
         if (screen.texture.width > screen.texture.height)
@@ -46,8 +59,30 @@ public class VideoController : MonoBehaviour
         screen.transform.localScale = scale;
         bc = GetComponent<BoxCollider2D>();
         bc.transform.localScale = scale;
+
+        //Load videoPlayer
+        var videoPlayer = GetComponent<VideoPlayer>();
+
+        //Wait until video is prepared
+        videoPlayer.Prepare();
+        while (!videoPlayer.isPrepared)
+        {
+            yield return null;
+        }
+
+        //Play video once prepared
+        if (videoPlayer.isPrepared)
+        {
+            videoPlayer.targetTexture = (RenderTexture)screen.texture; 
+            videoPlayer.Play();
+        }
+
+        //Remove video after a while. Needs a fading transition ?
+        yield return new WaitForSeconds(10); //Sets the amount of time before a video is removed - time should be randomized
+        StartCoroutine(Fade());
     }
 
+    // Sets the dimensions of the film
     public void SetSize(float width, float height)
     {
         RectTransform r = GetComponent<RectTransform>();
@@ -55,21 +90,33 @@ public class VideoController : MonoBehaviour
         GetComponent<BoxCollider2D>().size = new Vector2(width, height);
     }
 
-
+    // Sets position of the film 
     public void SetPos(Vector3 pos)
     {
         RectTransform r = GetComponent<RectTransform>();
         r.transform.position = pos;
     }
 
-   // void FixedUpdate()
-   // {
-   //     rb.AddForce (new Vector3 (dir, 0, 0));
-   // }
+    //Provide a fading out animation before deleting the video
+    IEnumerator Fade()
+    {
 
+        while (screen.color.a >0f)
+        {
+            Color c = screen.color;
+            c.a = c.a - 0.1f;
+            screen.color = c;
+            Debug.Log("Fade");
+            yield return new WaitForSeconds(0.00001f);
+        }
+        Destroy(gameObject, 1);
+    }
+    
     // Update is called once per frame
     void Update()
     {
+
+        //Define the movement of the screen
         transform.eulerAngles = defaultRot;
         if (rb.velocity.x + rb.velocity.y < 0.0001)
         {
@@ -80,6 +127,7 @@ public class VideoController : MonoBehaviour
             rb.AddForce(new Vector2(dirX * Random.Range(0f, maxSpeed * 0.05f), dirY * Random.Range(0f, maxSpeed * 0.05f)));
         }
         rb.velocity = new Vector2(Mathf.Min(rb.velocity.x, maxSpeed), Mathf.Min(rb.velocity.y, maxSpeed));
-    }
 
+    }
 }
+

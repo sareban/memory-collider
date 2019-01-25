@@ -17,6 +17,21 @@ public class SquaresTree {
         }
     }
 
+
+    public int CountSquare()
+    {
+        List<SquareCell> squares = new List<SquareCell>();
+        foreach (SquareCell topCell in topCells)
+        {
+            if (!topCell.busy)
+            {
+                squares.AddRange(topCell.getSquares());
+            }
+        }
+
+        return squares.Count;
+    }
+
     public SquareCell getSquare() {
         List<SquareCell> squares = new List<SquareCell>();
         foreach (SquareCell topCell in topCells) {

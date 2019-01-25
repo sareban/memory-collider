@@ -7,14 +7,13 @@ using UnityEngine.Video;
 public class SliceController : MonoBehaviour
 {
     private RectTransform canvasRect;
-   // public RawImage rawImage;
     public GameObject image;
     public string category = null;
     public string decade = null;
     public int maxImages = 30;
-    public int maxFilms = 5;
     public float widthRatio = 0.75f;
-    string photos_dir = "test/"; //photos_low : low resolution pictures directory
+    string photos_dir = "photos_low/"; //photos_low : low resolution pictures directory
+                                       //test/ : only videos
 
     void createBorders(RectTransform canvasRect)
     {
@@ -70,6 +69,7 @@ public class SliceController : MonoBehaviour
         float min_width = canvasRect.rect.width / 8f * Mathf.Max(15f / (textures.Length + 1f), 1f);
         float max_width = canvasRect.rect.width / 7.5f * Mathf.Max(15f / (textures.Length + 1f), 1f);
         SquaresTree sqt = new SquaresTree(canvasRect.rect.width * widthRatio, canvasRect.rect.height, max_width, min_width, canvasRect.position - new Vector3(canvasRect.rect.width * (1 - widthRatio) * 0.5f, 0, 0));
+
         for (int i = 0; i < textures.Length; i++)
         {
             SquareCell sqc = sqt.getSquare();
@@ -83,60 +83,10 @@ public class SliceController : MonoBehaviour
         }
     }
 
-    void spawnFilms(RectTransform canvasRect, VideoClip[] clips)
-    {
-        GameObject films = new GameObject();
-        films.name = "Films";
-        films.transform.SetParent(canvasRect.transform);
-        float available_size = (1 - (clips.Length + 1) * 0.01f) * Mathf.Min(canvasRect.rect.width, canvasRect.rect.height);
-        float min_width = canvasRect.rect.width / 8f * Mathf.Max(15f / (clips.Length + 1f), 1f);
-        float max_width = canvasRect.rect.width / 7.5f * Mathf.Max(15f / (clips.Length + 1f), 1f);
-        SquaresTree sqt = new SquaresTree(canvasRect.rect.width * widthRatio, canvasRect.rect.height, max_width, min_width, canvasRect.position - new Vector3(canvasRect.rect.width * (1 - widthRatio) * 0.5f, 0, 0));
-
-        for (int i = 0; i < clips.Length; i++)
-        {
-            SquareCell sqc = sqt.getSquare();
-            float size = sqc.side;
-            GameObject vid = Instantiate(image, sqc.center, Quaternion.identity);
-
-            vid.name = string.Format("film{0}", i);
-            vid.transform.SetParent(films.transform);
-
-            var videoPlayer = vid.AddComponent<UnityEngine.Video.VideoPlayer>();
-            //videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.APIOnly;
-
-            videoPlayer.clip = clips[i];
-            //Debug.Log(videoPlayer.clip);
-            //Debug.Log(vid.GetComponent<ImageController>().GetImgRenderer().GetComponent<Renderer>());
-            //(vid.GetComponent<ImageController>()).SetUpVidScreen((Texture2D)Resources.Load("vidscreen"));
-            Debug.Log(videoPlayer.texture);
-            Debug.Log("aa");
-            (vid.GetComponent<ImageController>()).SetUpVidScreen((Texture2D)videoPlayer.texture);
-            (vid.GetComponent<ImageController>()).SetSize(size, size);
-            (vid.GetComponent<ImageController>()).SetPos(sqc.center);
-            //VideoController vidi = (vid.GetComponent<VideoController>());
-           
-            // Debug.Log(vid.GetComponent<ImageController>().GetImgRenderer());
-
-
-
-            //  videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.MaterialOverride;
-            // videoPlayer.targetMaterialRenderer = (vid.GetComponent<ImageController>()).GetImgRenderer();
-            //  videoPlayer.targetMaterialProperty = "_MainTex";
-
-
-
-            //  rawImage.texture = videoPlayer.texture;
-            // videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.RenderTexture;
-
-            videoPlayer.Play();
-        }
-    }
-
-
 
 
     // Use this for initialization
+    // Need coroutines to manage the pop up / destruction of videos
     void Start()
     {
         if (decade == null)
@@ -155,9 +105,9 @@ public class SliceController : MonoBehaviour
 
         //------- PICTURES --------------
         // Load Textures from the defined base directory. PROBLEM :  Resources.LoadAll VERY RESOURCES CONSUMING, needs another delayed approach 
-        //List<Texture2D> textures = new List<Texture2D>(Resources.LoadAll<Texture2D>(basedir));
+        List<Texture2D> textures = new List<Texture2D>(Resources.LoadAll<Texture2D>(basedir));
         //Build lists from the loaded resoruces
-        List<Texture2D> textures = new List<Texture2D>(); //DELETE AFTER TESTS
+        // FOR TEST List<Texture2D> textures = new List<Texture2D>(); //DELETE AFTER TESTS
         List <Texture2D> textures_init = new List<Texture2D>(textures);
 
 
@@ -180,58 +130,7 @@ public class SliceController : MonoBehaviour
         }
 
         //Call the method to display pictures on the screens
-        //spawnImages(canvasRect, images);
-
-        //------- FILMS --------------
-        // Load VideoClips from the defined base directory. PROBLEM :  Resources.LoadAll VERY RESOURCES CONSUMING, needs another delayed approach 
-        List<VideoClip> clips = new List<VideoClip>(Resources.LoadAll<VideoClip>(basedir));
-        //List<VideoClip> clips = new List<VideoClip>();
-        List<VideoClip> clips_init = new List<VideoClip>(clips);
-
-        //----Create a new list to select a subset of films from the available assets 
-        //Number of films to display = minimum between films available and set parameter
-        int numFilms = Mathf.Min(maxFilms, clips.Count);
-        VideoClip[] films = new VideoClip[numFilms];
-
-        for (int i = 0; i < films.Length; i++)
-        {
-            if (clips.Count == 0)
-            {
-                clips = new List<VideoClip>(clips_init);
-            }
-            //Algorithm to randomize the choice : simple random int
-            //int choice = Random.Range(0, textures.Count);
-            //films[i] = clips[choice];
-            films[i] = clips[i];
-            //clips.RemoveAt(choice);
-        }
-
-        if (films.Length != 0)
-        {
-            Debug.Log(films[1]);
-        }
-
-
-        //Call the method to display pictures on the screens
-        spawnFilms(canvasRect, films);
-
-        //---------TEST : THIS WILL DISPLAY A VIDEO ON THE MAIN CAMERA-----------
-        //VideoClip[] films = new VideoClip[] { Resources.Load<VideoClip>("TEST-VIDEO2")};
-        //GameObject camera = GameObject.Find("Main Camera");
-        //var videoPlayer = camera.AddComponent<UnityEngine.Video.VideoPlayer>();
-        //videoPlayer.clip = films[0];
-        //Debug.Log(films);
-        //videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.CameraNearPlane;
-        //videoPlayer.targetCameraAlpha = 0.5F;
-        //videoPlayer.Play();
-
-
-
-
-
-        //Debug.Log(files);
-        //new SquaresAssigner(100, 100, 50, 10, new Vector3(0, 0, canvasRect.position.z));
-        //SquaresTree sq = new SquaresTree(8, 8, 4, 1);
+        spawnImages(canvasRect, images);
     }
 
 

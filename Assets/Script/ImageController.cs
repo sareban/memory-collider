@@ -75,27 +75,6 @@ public class ImageController : MonoBehaviour
     }
 
 
-    public void SetUpVidScreen(Texture2D texture)
-    {
-        img = GetComponent<Image>();
-        Debug.Log(img);
-
-        img.sprite = IMG2Sprite.instance.LoadNewSprite(texture);
-
-        Vector3 scale;
-        if (img.sprite.texture.width > img.sprite.texture.height)
-        {
-            scale = new Vector3(1f, (float)img.sprite.texture.height / (float)img.sprite.texture.width, 1f);
-        }
-        else
-        {
-            scale = new Vector3((float)img.sprite.texture.width / (float)img.sprite.texture.height, 1f, 1f);
-        }
-        img.transform.localScale = scale;
-        bc = GetComponent<BoxCollider2D>();
-        bc.transform.localScale = scale;
-    }
-
     public void SetSize(float width, float height)
     {
         RectTransform r = GetComponent<RectTransform>();
@@ -110,11 +89,22 @@ public class ImageController : MonoBehaviour
         r.transform.position = pos;
     }
 
-    void FixedUpdate()
+
+    //Provide a fading out animation before deleting the image
+    IEnumerator Fade()
     {
-        //rb.AddForce (new Vector3 (dir, 0, 0));
+
+        while (img.color.a > 0f)
+        {
+            Color c = img.color;
+            c.a = c.a - 0.1f;
+            img.color = c;
+            Debug.Log("Fade");
+            yield return new WaitForSeconds(0.00001f);
+        }
+        Destroy(gameObject, 1);
     }
-    // Update is called once per frame
+
     void Update()
     {
         transform.eulerAngles = defaultRot;
