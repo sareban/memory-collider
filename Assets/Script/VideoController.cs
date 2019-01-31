@@ -45,6 +45,16 @@ public class VideoController : MonoBehaviour
         screen.texture = tex;
         screen.enabled = true;
 
+        Color c = screen.color;
+        c.a = 0;
+        screen.color = c;
+        while (screen.color.a < 1f)
+        {
+            c.a = c.a + 0.1f;
+            screen.color = c;
+            yield return new WaitForSeconds(0.00001f);
+        }
+
         //Adjust screen
 
         Vector3 scale;
@@ -77,9 +87,11 @@ public class VideoController : MonoBehaviour
             videoPlayer.Play();
         }
 
-        //Remove video after a while. Needs a fading transition ?
-        yield return new WaitForSeconds(10); //Sets the amount of time before a video is removed - time should be randomized
-        StartCoroutine(Fade());
+        //Remove video after a while. Sets the amount of time before a video is removed
+        yield return new WaitForSeconds(Random.Range(10.0f, 25.0f));
+        //StartCoroutine(Fade());
+        //sqc.release();
+        //yield return null;
     }
 
     // Sets the dimensions of the film
@@ -100,13 +112,12 @@ public class VideoController : MonoBehaviour
     //Provide a fading out animation before deleting the video
     IEnumerator Fade()
     {
-
+        //better function :   sprite.color = new Color(1f,1f,1f,Mathf.SmoothStep(minimum, maximum, t));
         while (screen.color.a >0f)
         {
             Color c = screen.color;
             c.a = c.a - 0.1f;
             screen.color = c;
-            Debug.Log("Fade");
             yield return new WaitForSeconds(0.00001f);
         }
         Destroy(gameObject, 1);

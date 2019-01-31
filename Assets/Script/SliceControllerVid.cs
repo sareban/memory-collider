@@ -50,10 +50,9 @@ public class SliceControllerVid : MonoBehaviour
         float min_width = canvasRect.rect.width / 15f * Mathf.Max(15f / (clips.Length + 1f), 1f); //Change value to change the number of vid onscreen
         float max_width = canvasRect.rect.width / 7.5f * Mathf.Max(15f / (clips.Length + 1f), 1f);
         SquaresTree sqt = new SquaresTree(canvasRect.rect.width * widthRatio, canvasRect.rect.height, max_width, min_width, canvasRect.position - new Vector3(canvasRect.rect.width * (1 - widthRatio) * 0.5f, 0, 0));
-        Debug.Log(sqt.CountSquare());
+        //Debug.Log(sqt.CountSquare());
         for (int i = 0; i < clips.Length; i++)
         {
-            Debug.Log(i);
             SquareCell sqc = sqt.getSquare();
             float size = sqc.side;
             GameObject vid = Instantiate(image, sqc.center, Quaternion.identity);
@@ -76,7 +75,6 @@ public class SliceControllerVid : MonoBehaviour
 
 
     // Use this for initialization
-    // Need coroutines to manage the pop up / destruction of videos
     void Start()
     {
         if (decade == null)

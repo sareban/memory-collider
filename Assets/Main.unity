@@ -20373,8 +20373,9 @@ MonoBehaviour:
   category: 
   decade: 
   maxImages: 30
-  maxFilms: 5
   widthRatio: 0.75
+  images: {fileID: 0}
+  counter: 0
 --- !u!1 &648586629
 GameObject:
   m_ObjectHideFlags: 0
@@ -35344,8 +35345,9 @@ MonoBehaviour:
   category: 
   decade: 
   maxImages: 30
-  maxFilms: 5
   widthRatio: 0.75
+  images: {fileID: 0}
+  counter: 0
 --- !u!1001 &1036259292
 Prefab:
   m_ObjectHideFlags: 0
@@ -44233,8 +44235,9 @@ MonoBehaviour:
   category: 
   decade: 
   maxImages: 30
-  maxFilms: 5
   widthRatio: 0.75
+  images: {fileID: 0}
+  counter: 0
 --- !u!1001 &1264495835
 Prefab:
   m_ObjectHideFlags: 0
@@ -52902,8 +52905,9 @@ MonoBehaviour:
   category: 
   decade: 
   maxImages: 30
-  maxFilms: 5
   widthRatio: 0.75
+  images: {fileID: 0}
+  counter: 0
 --- !u!1 &1512454164
 GameObject:
   m_ObjectHideFlags: 0
@@ -56507,8 +56511,9 @@ MonoBehaviour:
   category: 
   decade: 
   maxImages: 30
-  maxFilms: 5
   widthRatio: 0.75
+  images: {fileID: 0}
+  counter: 0
 --- !u!1 &1623355724
 GameObject:
   m_ObjectHideFlags: 0
@@ -66146,8 +66151,9 @@ MonoBehaviour:
   category: 
   decade: 
   maxImages: 30
-  maxFilms: 5
   widthRatio: 0.75
+  images: {fileID: 0}
+  counter: 0
 --- !u!1 &1907663976
 GameObject:
   m_ObjectHideFlags: 0
@@ -70874,6 +70880,7 @@ GameObject:
   - component: {fileID: 2086829297}
   - component: {fileID: 2086829301}
   - component: {fileID: 2086829302}
+  - component: {fileID: 2086829303}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -70970,6 +70977,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97fd46528ed4e6d449dc3e79100d9594, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2086829303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2086829296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3dbd8eb5ef2cd4f448252b7af108bc00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectName: 
 --- !u!1 &2088334175
 GameObject:
   m_ObjectHideFlags: 0
@@ -71740,8 +71759,9 @@ MonoBehaviour:
   category: 
   decade: 
   maxImages: 30
-  maxFilms: 5
   widthRatio: 0.75
+  images: {fileID: 0}
+  counter: 0
 --- !u!1 &2120666771
 GameObject:
   m_ObjectHideFlags: 0
@@ -72126,8 +72146,9 @@ MonoBehaviour:
   category: 
   decade: 
   maxImages: 30
-  maxFilms: 5
   widthRatio: 0.75
+  images: {fileID: 0}
+  counter: 0
 --- !u!1001 &2138742870
 Prefab:
   m_ObjectHideFlags: 0

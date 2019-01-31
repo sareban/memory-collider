@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine.Video;
+using System.Collections;
 
 public class SliceController : MonoBehaviour
 {
@@ -14,6 +15,11 @@ public class SliceController : MonoBehaviour
     public float widthRatio = 0.75f;
     string photos_dir = "photos_low/"; //photos_low : low resolution pictures directory
                                        //test/ : only videos
+
+    private List<Texture2D> textures;
+    private SquaresTree sqt;
+    public GameObject images;
+    public int counter;
 
     void createBorders(RectTransform canvasRect)
     {
@@ -37,7 +43,7 @@ public class SliceController : MonoBehaviour
 
 
     }
-
+    //TO REMOVE
     void spawnImages(RectTransform canvasRect, string[] filenames)
     {
         GameObject images = new GameObject();
@@ -60,29 +66,27 @@ public class SliceController : MonoBehaviour
         }
     }
 
-    void spawnImages(RectTransform canvasRect, Texture2D[] textures)
+    void spawnImages(Texture2D[] textures)
     {
-        GameObject images = new GameObject();
-        images.name = "Images";
-        images.transform.SetParent(canvasRect.transform);
-        float available_size = (1 - (textures.Length + 1) * 0.01f) * Mathf.Min(canvasRect.rect.width, canvasRect.rect.height);
-        float min_width = canvasRect.rect.width / 8f * Mathf.Max(15f / (textures.Length + 1f), 1f);
-        float max_width = canvasRect.rect.width / 7.5f * Mathf.Max(15f / (textures.Length + 1f), 1f);
-        SquaresTree sqt = new SquaresTree(canvasRect.rect.width * widthRatio, canvasRect.rect.height, max_width, min_width, canvasRect.position - new Vector3(canvasRect.rect.width * (1 - widthRatio) * 0.5f, 0, 0));
-
         for (int i = 0; i < textures.Length; i++)
         {
-            SquareCell sqc = sqt.getSquare();
-            float size = sqc.side;
-            GameObject img = Instantiate(image, sqc.center, Quaternion.identity);
-            img.name = string.Format("image{0}", i);
-            img.transform.SetParent(images.transform);
-            (img.GetComponent<ImageController>()).SetUpImage(textures[i]);
-            (img.GetComponent<ImageController>()).SetSize(size, size);
-            (img.GetComponent<ImageController>()).SetPos(sqc.center);
+            spawnImage(textures[i]);
+            counter += 1;
         }
     }
 
+
+    void spawnImage(Texture2D texture)
+    {
+        SquareCell sqc = sqt.getSquare();
+        float size = sqc.side;
+        GameObject img = Instantiate(image, sqc.center, Quaternion.identity);
+        img.name = string.Format("image{0}", counter);
+        img.transform.SetParent(images.transform);
+        (img.GetComponent<ImageController>()).StartCoroutine((img.GetComponent<ImageController>()).SetUpImage(texture, sqc));
+        (img.GetComponent<ImageController>()).SetSize(size, size);
+        (img.GetComponent<ImageController>()).SetPos(sqc.center);
+    }
 
 
     // Use this for initialization
@@ -96,6 +100,10 @@ public class SliceController : MonoBehaviour
         RectTransform canvasRect = GetComponent<RectTransform>();
         createBorders(canvasRect);
 
+        images = new GameObject();
+        images.name = "Images";
+        images.transform.SetParent(canvasRect.transform);
+
         //DIR TO LOAD PICTURES FROM
         string basedir = photos_dir + decade;  
         if (category != null)
@@ -103,9 +111,14 @@ public class SliceController : MonoBehaviour
             basedir += "/" + category;
         }
 
+        float available_size = (1 - (maxImages + 1) * 0.01f) * Mathf.Min(canvasRect.rect.width, canvasRect.rect.height);
+        float min_width = canvasRect.rect.width / 8f * Mathf.Max(15f / (maxImages + 1f), 1f);
+        float max_width = canvasRect.rect.width / 7.5f * Mathf.Max(15f / (maxImages + 1f), 1f);
+        sqt = new SquaresTree(canvasRect.rect.width * widthRatio, canvasRect.rect.height, max_width, min_width, canvasRect.position - new Vector3(canvasRect.rect.width * (1 - widthRatio) * 0.5f, 0, 0));
+
         //------- PICTURES --------------
         // Load Textures from the defined base directory. PROBLEM :  Resources.LoadAll VERY RESOURCES CONSUMING, needs another delayed approach 
-        List<Texture2D> textures = new List<Texture2D>(Resources.LoadAll<Texture2D>(basedir));
+        textures = new List<Texture2D>(Resources.LoadAll<Texture2D>(basedir));
         //Build lists from the loaded resoruces
         // FOR TEST List<Texture2D> textures = new List<Texture2D>(); //DELETE AFTER TESTS
         List <Texture2D> textures_init = new List<Texture2D>(textures);
@@ -116,8 +129,8 @@ public class SliceController : MonoBehaviour
         //Number of images to display = minimum between pictures available and set parameter
         int numImages = Mathf.Min(maxImages, textures.Count);
 
-        Texture2D[] images = new Texture2D[numImages];
-        for (int i = 0; i < images.Length; i++)
+        Texture2D[] texturesSelection = new Texture2D[numImages];
+        for (int i = 0; i < texturesSelection.Length; i++)
         {
             if (textures.Count == 0)
             {
@@ -125,12 +138,12 @@ public class SliceController : MonoBehaviour
             }
             //Algorithm to randomize the choice : simple random int
             int choice = Random.Range(0, textures.Count);
-            images[i] = textures[choice];
+            texturesSelection[i] = textures[choice];
             textures.RemoveAt(choice);
         }
 
         //Call the method to display pictures on the screens
-        spawnImages(canvasRect, images);
+        spawnImages(texturesSelection);
     }
 
 
@@ -138,6 +151,12 @@ public class SliceController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        while (images.transform.childCount < maxImages &&  sqt.CountSquare() != 0 )
+        {
+            spawnImage(textures[(int)Random.Range(0, textures.Count)]);
+            counter += 1;
+        }
+        //check number of image, if under - pop new one
     }
 
 

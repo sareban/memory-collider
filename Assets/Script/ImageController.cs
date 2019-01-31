@@ -16,6 +16,8 @@ public class ImageController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+
+        gameObject.tag = "Photo";
         defaultRot = transform.eulerAngles;
         rb = GetComponent<Rigidbody2D>();
         float dirX = (float)Random.Range(0, 1);
@@ -29,6 +31,36 @@ public class ImageController : MonoBehaviour
         numInstances += 1;
     }
 
+
+    public void SetSize(float width, float height)
+    {
+        RectTransform r = GetComponent<RectTransform>();
+        r.sizeDelta = new Vector2(width, height);
+        GetComponent<BoxCollider2D>().size = new Vector2(width, height);
+    }
+
+    public void SetPos(Vector3 pos)
+    {
+        RectTransform r = GetComponent<RectTransform>();
+        r.transform.position = pos;
+    }
+
+    //Provide a fading out animation before deleting the image
+    IEnumerator Fade()
+    {
+        //better function :   sprite.color = new Color(1f,1f,1f,Mathf.SmoothStep(minimum, maximum, t));
+        //public void CrossFadeAlpha(float alpha, float duration, bool ignoreTimeScale);
+        while (img.color.a > 0f)
+        {
+            Color c = img.color;
+            c.a = c.a - 0.1f;
+            img.color = c;
+            yield return new WaitForSeconds(0.00001f);
+        }
+        Destroy(gameObject, 1);
+    }
+
+    //TO REMOVE
     public void SetUpImage(string imgPath)
     {
         img = GetComponent<Image>();
@@ -49,14 +81,29 @@ public class ImageController : MonoBehaviour
         bc.transform.localScale = scale;
     }
 
-    public void SetUpImage(Texture2D texture)
+    public SpriteRenderer GetImgRenderer()
     {
+        return GetComponent<Image>().GetComponent<SpriteRenderer>();
+    }
 
+    public IEnumerator SetUpImage(Texture2D texture, SquareCell sqc)
+    {
         img = GetComponent<Image>();
-        img.enabled = true;
 
         img.sprite = SpritesCache.instance.LoadSprite(texture);
-        Vector3 scale;
+        img.enabled = true;
+
+        Color c = img.color;
+        c.a = 0;
+        img.color = c;
+        while (img.color.a < 1f)
+        {
+             c.a = c.a + 0.1f;
+             img.color = c;
+            yield return new WaitForSeconds(0.00001f);
+        }
+
+       Vector3 scale;
         if (img.sprite.texture.width > img.sprite.texture.height)
         {
             scale = new Vector3(1f, (float)img.sprite.texture.height / (float)img.sprite.texture.width, 1f);
@@ -68,41 +115,13 @@ public class ImageController : MonoBehaviour
         img.transform.localScale = scale;
         bc = GetComponent<BoxCollider2D>();
         bc.transform.localScale = scale;
-    }
-    public SpriteRenderer GetImgRenderer()
-    {
-        return GetComponent<Image>().GetComponent<SpriteRenderer>();
-    }
 
+        //Remove image after a while. Sets the amount of time before an image is removed. Format : min, max
+        yield return new WaitForSeconds(Random.Range(10.0f, 25.0f)); 
+        StartCoroutine(Fade());
 
-    public void SetSize(float width, float height)
-    {
-        RectTransform r = GetComponent<RectTransform>();
-        r.sizeDelta = new Vector2(width, height);
-        GetComponent<BoxCollider2D>().size = new Vector2(width, height);
-    }
-
-
-    public void SetPos(Vector3 pos)
-    {
-        RectTransform r = GetComponent<RectTransform>();
-        r.transform.position = pos;
-    }
-
-
-    //Provide a fading out animation before deleting the image
-    IEnumerator Fade()
-    {
-
-        while (img.color.a > 0f)
-        {
-            Color c = img.color;
-            c.a = c.a - 0.1f;
-            img.color = c;
-            Debug.Log("Fade");
-            yield return new WaitForSeconds(0.00001f);
-        }
-        Destroy(gameObject, 1);
+        sqc.release();
+        yield return null;
     }
 
     void Update()

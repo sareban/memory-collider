@@ -81,6 +81,15 @@ public class SquareCell {
         }
     }
 
+    public void release()
+    {
+        this.busy = false;
+        foreach (SquareCell child in children)
+        {
+            child.release();
+        }
+    }
+
     public bool isBusy() {
         if (busy) {
             return true;
