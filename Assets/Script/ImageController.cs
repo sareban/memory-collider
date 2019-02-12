@@ -11,7 +11,8 @@ public class ImageController : MonoBehaviour
     private Vector3 defaultRot;
     public float maxSpeed = 50f;
     Image img;
- 
+    private bool is_selected = false;
+    private bool is_fading = false;
 
     // Use this for initialization
     void Start()
@@ -29,6 +30,7 @@ public class ImageController : MonoBehaviour
         RectTransform r = GetComponent<RectTransform>();
         r.sizeDelta -= new Vector2(20, 20);
         numInstances += 1;
+     
     }
 
 
@@ -50,6 +52,8 @@ public class ImageController : MonoBehaviour
     {
         //better function :   sprite.color = new Color(1f,1f,1f,Mathf.SmoothStep(minimum, maximum, t));
         //public void CrossFadeAlpha(float alpha, float duration, bool ignoreTimeScale);
+        is_fading = true;
+
         while (img.color.a > 0f)
         {
             Color c = img.color;
@@ -117,11 +121,34 @@ public class ImageController : MonoBehaviour
         bc.transform.localScale = scale;
 
         //Remove image after a while. Sets the amount of time before an image is removed. Format : min, max
-        yield return new WaitForSeconds(Random.Range(10.0f, 25.0f)); 
+        
+        yield return new WaitForSeconds(Random.Range(10.0f, 50.0f));
+        while (is_selected)
+        {
+            yield return new WaitForSeconds(Random.Range(10.0f, 50.0f));
+        }
+        //When executed, image will fade
         StartCoroutine(Fade());
 
         sqc.release();
         yield return null;
+    }
+
+    public void setSelected()
+    {
+        is_selected = true;
+    }
+    public void setUnselected()
+    {
+        is_selected = false;
+    }
+    public bool isSelected()
+    {
+        return is_selected;
+    }
+    public bool isFading()
+    {
+        return is_fading;
     }
 
     void Update()
