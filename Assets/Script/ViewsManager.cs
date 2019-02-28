@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
+//This class controls the user interactions to change the mode of display, either default, decades or categories.
 public class ViewsManager : MonoBehaviour
 {
     public GameObject main;
@@ -10,7 +12,7 @@ public class ViewsManager : MonoBehaviour
     public GameObject cylinder;
     public bool isMain;
     public bool isTransitioning = false;
-    public bool preload = true;
+    public bool preload = false;
 
     public List<GameObject> decades;
     public List<GameObject> categories;
@@ -31,6 +33,11 @@ public class ViewsManager : MonoBehaviour
             GameObject go = decadesContainer.transform.Find(decade).gameObject;
             decades.Add(go);
             if (preload)
+            {
+                go.SetActive(true);
+                StartCoroutine(QuickDisable(go));
+            }
+            if (decade=="50s")
             {
                 go.SetActive(true);
                 StartCoroutine(QuickDisable(go));
@@ -61,8 +68,7 @@ public class ViewsManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-         
-        if((Input.GetAxis("CONTROLLER_RIGHT_TRIGGER") > 0.7 || Input.GetKey(KeyCode.Backspace)) && !isTransitioning && !isMain)
+        if ((OVRInput.GetUp(OVRInput.Button.Back) || Input.GetKey(KeyCode.Backspace)) && !isTransitioning && !isMain)
         {
             isDecade = false;
             isMain = true;
@@ -70,10 +76,16 @@ public class ViewsManager : MonoBehaviour
             currentDecadeIdx = 0;
             Transition(currentView, main, false, false);
             currentView = main;
+            VideoPlayer[] videoPlayers = Object.FindObjectsOfType<VideoPlayer>();
+            foreach (VideoPlayer videoPlayer in videoPlayers)
+            {
+                videoPlayer.Play();
+            }
+
         }
 
         // Go forward in decades
-        if ((Input.GetAxis("CONTROLLER_RIGHT_STICK_HORIZONTAL") > 0.7 || Input.GetKey(KeyCode.RightArrow)) && !isTransitioning && (isMain || isDecade))
+        if ((OVRInput.GetDown(OVRInput.Button.DpadRight) || Input.GetKey(KeyCode.RightArrow)) && !isTransitioning && (isMain || isDecade))
         {
             if (currentDecadeIdx == numDecades - 1)
             {
@@ -87,7 +99,7 @@ public class ViewsManager : MonoBehaviour
         }
 
         // Go backward in decades
-        if ((Input.GetAxis("CONTROLLER_RIGHT_STICK_HORIZONTAL") < -0.7 || Input.GetKey(KeyCode.LeftArrow)) && !isTransitioning && (!isMain && isDecade))
+        if ((OVRInput.GetDown(OVRInput.Button.DpadLeft) || Input.GetKey(KeyCode.LeftArrow)) && !isTransitioning && (!isMain && isDecade))
         {
             currentDecadeIdx--;
             Transition(currentView, decades[currentDecadeIdx], false, true);
@@ -98,8 +110,8 @@ public class ViewsManager : MonoBehaviour
         }
 
         // Change category
-        if ((Input.GetAxis("CONTROLLER_RIGHT_STICK_VERTICAL") < -0.7 || Input.GetKey(KeyCode.DownArrow)) && !isTransitioning && (isMain || !isDecade))
-        {
+        if ((OVRInput.GetDown(OVRInput.Button.DpadDown) || Input.GetKey(KeyCode.DownArrow)) && !isTransitioning && (isMain || !isDecade))
+            {
             if (currentCategoryIdx == numCategories - 1)
             {
                 return;
@@ -111,13 +123,22 @@ public class ViewsManager : MonoBehaviour
             currentView = categories[currentCategoryIdx];
         }
 
-        if ((Input.GetAxis("CONTROLLER_RIGHT_STICK_VERTICAL") > 0.7 || Input.GetKey(KeyCode.UpArrow)) && !isTransitioning && (!isMain && !isDecade))
+        if ((OVRInput.GetDown(OVRInput.Button.DpadUp) || Input.GetKey(KeyCode.UpArrow)) && !isTransitioning && (!isMain && !isDecade))
         {
             currentCategoryIdx--;
             Transition(currentView, categories[currentCategoryIdx], false, false);
             currentView = categories[currentCategoryIdx];
 
             isMain = currentCategoryIdx == 0;
+            if (isMain)
+            {
+                VideoPlayer[] videoPlayers = Object.FindObjectsOfType<VideoPlayer>();
+                foreach (VideoPlayer videoPlayer in videoPlayers)
+                {
+                    videoPlayer.Play();
+                }
+
+            }
             isDecade = false;
         }
 

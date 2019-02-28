@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
+// This class implement a single image displayed on the screen. It is instatiated by a SliceController
 public class ImageController : MonoBehaviour
 {
     private static int numInstances = 0;
     private Rigidbody2D rb;
     private BoxCollider2D bc;
     private Vector3 defaultRot;
-    public float maxSpeed = 50f;
+    public float maxSpeed = 20f;
     Image img;
     private bool is_selected = false;
     private bool is_fading = false;
+    private Vector2 force;
+    Color baseColor;
+    private GameObject scriptHolder;
 
     // Use this for initialization
     void Start()
@@ -25,12 +29,14 @@ public class ImageController : MonoBehaviour
         dirX = 2f * dirX - 1f;
         float dirY = (float)Random.Range(0, 1);
         dirY = 2f * dirY - 1f;
-        rb.AddForce(new Vector2(dirX * Random.Range(0f, maxSpeed * 50), dirY * Random.Range(0f, maxSpeed * 50)));
+        force = new Vector2(dirX * Random.Range(0f, maxSpeed * 50), dirY * Random.Range(0f, maxSpeed * 50));
+        rb.AddForce(force);
 
         RectTransform r = GetComponent<RectTransform>();
         r.sizeDelta -= new Vector2(20, 20);
         numInstances += 1;
-     
+        baseColor = img.color;
+
     }
 
 
@@ -64,36 +70,16 @@ public class ImageController : MonoBehaviour
         Destroy(gameObject, 1);
     }
 
-    //TO REMOVE
-    public void SetUpImage(string imgPath)
-    {
-        img = GetComponent<Image>();
-        img.enabled = true;
-
-        img.sprite = SpritesCache.instance.LoadSprite(imgPath);
-        Vector3 scale;
-        if (img.sprite.texture.width > img.sprite.texture.height)
-        {
-            scale = new Vector3(1f, (float)img.sprite.texture.height / (float)img.sprite.texture.width, 1f);
-        }
-        else
-        {
-            scale = new Vector3((float)img.sprite.texture.width / (float)img.sprite.texture.height, 1f, 1f);
-        }
-        img.transform.localScale = scale;
-        bc = GetComponent<BoxCollider2D>();
-        bc.transform.localScale = scale;
-    }
-
     public SpriteRenderer GetImgRenderer()
     {
         return GetComponent<Image>().GetComponent<SpriteRenderer>();
     }
 
+    // Method used to display an image on a screen
     public IEnumerator SetUpImage(Texture2D texture, SquareCell sqc)
     {
         img = GetComponent<Image>();
-
+        scriptHolder = GameObject.FindGameObjectsWithTag("ScriptHolder")[0];
         img.sprite = SpritesCache.instance.LoadSprite(texture);
         img.enabled = true;
 
@@ -102,6 +88,10 @@ public class ImageController : MonoBehaviour
         img.color = c;
         while (img.color.a < 1f)
         {
+            if(scriptHolder.GetComponent<Select>().onSelect)
+            {
+                c.a = 0;
+            }
              c.a = c.a + 0.1f;
              img.color = c;
             yield return new WaitForSeconds(0.00001f);
@@ -134,6 +124,7 @@ public class ImageController : MonoBehaviour
         yield return null;
     }
 
+    // is_selected and is_fading prevent certain automatic and user behaviors when set to true
     public void setSelected()
     {
         is_selected = true;
@@ -149,6 +140,26 @@ public class ImageController : MonoBehaviour
     public bool isFading()
     {
         return is_fading;
+    }
+
+    public void setTransparent()
+    {
+        img.color = Color.clear;
+    }
+    public void setColor()
+    {
+        Color c = baseColor;
+        c.a = 1;
+        img.color = c;
+    }
+
+    public void stop()
+    {
+        rb.AddForce(-force);
+    }
+    public void move()
+    {
+        rb.AddForce(force);
     }
 
     void Update()

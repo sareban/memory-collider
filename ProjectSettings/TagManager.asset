@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Panel
   - Photo
+  - ScriptHolder
+  - Video
   layers:
   - Default
   - TransparentFX

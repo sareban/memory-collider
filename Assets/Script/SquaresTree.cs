@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 using System.Linq;
 
+// This class controls how space on the screen panels is divided in a tree structure to allow for an organic filling of space with archive items
+// At the root is an instance of a SquaresTree which is then populated with SquareCell. SquareCells are set busy when occupied by an image / film, then released to renew the images displayed.
 public class SquaresTree {
     private List<SquareCell> topCells = new List<SquareCell>();
 

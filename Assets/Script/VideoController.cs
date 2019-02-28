@@ -5,37 +5,36 @@ using UnityEngine;
 using UnityEngine.Video;
 using UnityEditor;
 
+// This class implement a single video  displayed on the screen. It is instatiated by a SliceControllerVid
 public class VideoController : MonoBehaviour
 {
     private static int numInstances = 0;
     private Rigidbody2D rb;
     private BoxCollider2D bc;
     private Vector3 defaultRot;
-    public float maxSpeed = 50f;
+    public float maxSpeed = 20f;
     int destroyTime = 5;
+    private bool is_selected = false;
+    private bool is_fading = false;
     RawImage screen;
+    Color baseColor;
 
 
     // Use this for initialization : define statics and dynamics properties
     void Start()
     {
+        gameObject.tag = "Video";
         defaultRot = transform.eulerAngles;
         rb = GetComponent<Rigidbody2D>();
-        float dirX = (float)Random.Range(0, 1);
-        dirX = 2f * dirX - 1f;
-        float dirY = (float)Random.Range(0, 1);
-        dirY = 2f * dirY - 1f;
-        rb.AddForce(new Vector2(dirX * Random.Range(0f, maxSpeed * 50), dirY * Random.Range(0f, maxSpeed * 50)));
+        baseColor = screen.color;
 
         RectTransform r = GetComponent<RectTransform>();
         r.sizeDelta -= new Vector2(20, 20);
         numInstances += 1;
-       
-
 
     }
 
-    // Display the film on screen
+    // Method used to display a video on a screen
     public IEnumerator SetUpFilm()
     {
         //Prepare screen
@@ -73,6 +72,9 @@ public class VideoController : MonoBehaviour
         //Load videoPlayer
         var videoPlayer = GetComponent<VideoPlayer>();
 
+        //To disabéle afterwards
+        videoPlayer.isLooping = true;
+
         //Wait until video is prepared
         videoPlayer.Prepare();
         while (!videoPlayer.isPrepared)
@@ -101,7 +103,6 @@ public class VideoController : MonoBehaviour
         r.sizeDelta = new Vector2(width, height);
         GetComponent<BoxCollider2D>().size = new Vector2(width, height);
     }
-
     // Sets position of the film 
     public void SetPos(Vector3 pos)
     {
@@ -112,7 +113,6 @@ public class VideoController : MonoBehaviour
     //Provide a fading out animation before deleting the video
     IEnumerator Fade()
     {
-        //better function :   sprite.color = new Color(1f,1f,1f,Mathf.SmoothStep(minimum, maximum, t));
         while (screen.color.a >0f)
         {
             Color c = screen.color;
@@ -122,12 +122,39 @@ public class VideoController : MonoBehaviour
         }
         Destroy(gameObject, 1);
     }
-    
+
+    // is_selected and is_fading prevent certain automatic and user behaviors when set to true
+    public void setSelected()
+    {
+        is_selected = true;
+    }
+    public void setUnselected()
+    {
+        is_selected = false;
+    }
+    public bool isSelected()
+    {
+        return is_selected;
+    }
+    public bool isFading()
+    {
+        return is_fading;
+    }
+
+    public void setTransparent()
+    {
+        screen.color = Color.clear;
+    }
+    public void setColor()
+    {
+        Color c = baseColor;
+        c.a = 1;
+        screen.color = c;
+    }
+
     // Update is called once per frame
     void Update()
     {
-
-        //Define the movement of the screen
         transform.eulerAngles = defaultRot;
         if (rb.velocity.x + rb.velocity.y < 0.0001)
         {

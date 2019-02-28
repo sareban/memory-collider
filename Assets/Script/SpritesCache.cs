@@ -4,8 +4,7 @@ using System.IO;
 using UnityEngine;
 
 
-// Load pictures into a sprite cache to be queried afterwards (! redesign the memory process?)
-
+// Load pictures into a sprite cache to be queried afterwards
 public class SpritesCache : MonoBehaviour {
     private static SpritesCache _instance;
 
@@ -31,7 +30,7 @@ public class SpritesCache : MonoBehaviour {
         if (!spriteCache.TryGetValue(path, out sprite))
         {
             {
-                sprite = IMG2Sprite.instance.LoadNewSprite(path);       // change sprite since passed by reference with the out keyword
+                sprite = IMG2Sprite.instance.LoadNewSprite(path); 
                 spriteCache.Add(path, sprite);
             }
                       
